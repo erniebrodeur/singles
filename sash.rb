@@ -12,12 +12,11 @@ class Sash < Hash
   attr_accessor :auto_load
   attr_accessor :auto_save
 
+
+
+  # initialization sets the values of the class Sash, not the contents of the Hash.
   def initialize(params = {})
-    @file = params[:file] if params[:file]
-    @backup = params[:backup] if params[:backup]
-    @mode = params[:mode] if params[:mode]
-    @auto_load = params[:auto_load] if params[:auto_load]
-    @auto_save = params[:auto_save] if params[:auto_save]
+    params.each { |k,v| instance_variable_set "@" + k.to_s,v}
     load if @auto_load
   end
 

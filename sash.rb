@@ -2,21 +2,23 @@ require 'fileutils'
 require 'yaml'
 
 # This is a savable hash, it can be configured and used to store whatever the
-# contents of the hash are for loading later.  Will serialize in yaml to keep it part
-# of the stdlib
+# contents of the hash are for loading later.  Will serialize in yaml to keep all
+# the dependencies in ruby stdlib.
 class Sash < Hash
 
   attr_accessor :file
   attr_accessor :backup
   attr_accessor :mode
-  attr_accessor :load
+  attr_accessor :auto_load
+  attr_accessor :auto_save
 
   def initialize(params = {})
     @file = params[:file] if params[:file]
     @backup = params[:backup] if params[:backup]
     @mode = params[:mode] if params[:mode]
-    @load = load if params[:load]
-    load if @load
+    @auto_load = params[:auto_load] if params[:auto_load]
+    @auto_save = params[:auto_save] if params[:auto_save]
+    load if @auto_load
   end
 
   # The base directory of the save file.
@@ -47,6 +49,10 @@ class Sash < Hash
     true
   end
 
+  def []=(k,v)
+    store k, v
+    save! if @auto_save == true
+  end
   # Save the hash to a file, overwriting if necessary.
   def save!
     delete_file
@@ -88,6 +94,6 @@ class Sash < Hash
   def delete_file
     return false if !@file
     FileUtils.rm @file if File.file? @file
-    returne true
+    return true
   end
 end
